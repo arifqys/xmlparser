@@ -7,7 +7,7 @@ from app import app
 from flask import Flask, flash, request, redirect, render_template
 from werkzeug.utils import secure_filename
 
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'xml'])
+ALLOWED_EXTENSIONS = set(['txt', 'doc', 'docx', 'html', 'xml'])
 
 def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -30,11 +30,12 @@ def upload_file():
 		if file and allowed_file(file.filename):
 			filename = secure_filename(file.filename)
 			file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-			xmltree = ET.parse('uploads/'+file.filename)
+			if filename.rsplit('.', 1)[1].lower() == 'xml':
+				xmltree = ET.parse('uploads/'+file.filename)
 			flash('File successfully uploaded')
 			return redirect('/')
 		else:
-			flash('Allowed file types are txt, pdf, png, jpg, jpeg, gif, xml')
+			flash('Allowed file types are txt, doc, docx, html, xml')
 			return redirect(request.url)
 
 if __name__ == "__main__":
